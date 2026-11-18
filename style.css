@@ -1,0 +1,42 @@
+@font-face{font-family:Inter;font-weight:300;font-display:swap;src:url(fonts/inter-latin-300-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-weight:500;font-display:swap;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-weight:600;font-display:swap;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-weight:700;font-display:swap;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:300;font-display:swap;src:url(fonts/space-grotesk-latin-300-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-display:swap;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-display:swap;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:600;font-display:swap;src:url(fonts/space-grotesk-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-display:swap;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+html,body{margin:0;height:100%;background:#02040A;overflow:hidden;color:#E8EEF8;font-family:Inter,sans-serif;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+button{font-family:Inter,sans-serif}
+.sg{font-family:'Space Grotesk',sans-serif}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-30px,25px) scale(.95)}}
+@keyframes haze{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.12);opacity:.6}}
+@keyframes fadein{0%{opacity:0;filter:blur(8px)}100%{opacity:1;filter:blur(0)}}
+@keyframes rise{0%{transform:scale(.4) translateY(20px);opacity:0;filter:blur(12px)}100%{transform:scale(1) translateY(0);opacity:1;filter:blur(0)}}
+@keyframes risem{0%{transform:translateY(16px) scale(.9);opacity:0;filter:blur(8px)}100%{transform:none;opacity:1;filter:blur(0)}}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fltm{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes sheet{0%{transform:translateY(100%)}100%{transform:none}}
+.drift{animation:drift 30s ease-in-out infinite;will-change:transform}
+.haze{animation:haze 7s ease-in-out infinite}
+.fadein{animation:fadein 1.2s ease both}
+.rise{animation:rise 1.1s cubic-bezier(.2,.8,.2,1) both}
+.risem{animation:risem .8s cubic-bezier(.2,.8,.2,1) both}
+.flt{animation:flt 6s ease-in-out infinite}
+.fltm{animation:fltm 6s ease-in-out infinite}
+.sheet{animation:sheet .35s cubic-bezier(.2,.8,.2,1) both}
+.btn{cursor:pointer;font-family:Inter,sans-serif}
+.ed:focus{outline:none}
+.ed:empty:before{content:attr(data-ph);color:rgba(232,238,248,.35)}
+.ed b,.ed strong{font-weight:700}
+.drop::placeholder{color:rgba(232,238,248,.42)}
+.drop:focus{outline:none}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chip{height:34px;min-width:38px;padding:0 12px;border-radius:17px;border:0;background:rgba(255,255,255,.07);color:#E8EEF8;cursor:pointer}
+.field{width:100%;height:44px;border:0;border-bottom:1px solid rgba(255,255,255,.25);background:transparent;color:#F1F6FF;font-size:15px;font-family:Inter,sans-serif;outline:none}
+.field::placeholder{color:rgba(232,238,248,.4)}

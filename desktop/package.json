@@ -1,0 +1,38 @@
+{
+  "name": "espaco-criativo",
+  "productName": "Espaço Criativo",
+  "version": "1.0.0",
+  "description": "Espaço Criativo — sua mente",
+  "author": "Isaque",
+  "main": "main.js",
+  "build": {
+    "appId": "com.isaque.espacocriativo",
+    "productName": "Espaço Criativo",
+    "files": [
+      "main.js",
+      "www/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Espaço Criativo",
+      "artifactName": "Espaco-Criativo-Setup-${version}.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^26.18.0"
+  }
+}
