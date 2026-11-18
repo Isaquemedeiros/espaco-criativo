@@ -13,12 +13,14 @@ function post({ url, headers, body }) {
 ipcMain.handle('ec-post', (e, a) => post(a));
 const path = require('path');
 if (!app.requestSingleInstanceLock()) { app.quit(); }
+// O nome do app tem 'ç'; tirar acentos do User-Agent evita que servidores recusem o cabeçalho
+app.userAgentFallback = app.userAgentFallback.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\x7E]/g, '');
 let win;
 function create() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 900, minHeight: 600, backgroundColor: '#02040A', show: false,
     title: 'Espaço Criativo', icon: path.join(__dirname, 'www', 'icon-512.png'), autoHideMenuBar: true,
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, spellcheck: true }
+    webPreferences: { webSecurity: false, contextIsolation: true, nodeIntegration: false, spellcheck: true }
   });
   Menu.setApplicationMenu(null);
   win.loadFile(path.join(__dirname, 'www', 'index.html'));
