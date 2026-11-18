@@ -1,7 +1,7 @@
 {
   "name": "espaco-criativo",
   "productName": "Espaço Criativo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Espaço Criativo — sua mente",
   "author": "Isaque",
   "main": "main.js",
@@ -30,7 +30,8 @@
       "createDesktopShortcut": true,
       "shortcutName": "Espaço Criativo",
       "artifactName": "Espaco-Criativo-Setup-${version}.exe"
-    }
+    },
+    "executableName": "EspacoCriativo"
   },
   "devDependencies": {
     "electron": "^33.4.11",
