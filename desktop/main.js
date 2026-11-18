@@ -1,5 +1,5 @@
 const { app, BrowserWindow, shell, Menu, ipcMain, net } = require('electron');
-ipcMain.handle('ec-post', async (e, { url, headers, body }) => { if (!/^https:\/\//i.test(url)) throw new Error('url'); const r = await net.fetch(url, { method: 'POST', headers, body }); return { status: r.status, body: await r.text() }; });
+ipcMain.handle('ec-post', async (e, { url, headers, body }) => { if (!/^https:\/\//i.test(url)) throw new Error('url'); const r = await net.fetch(url, { method: 'POST', headers: Object.assign({}, headers, { 'Content-Length': String(Buffer.byteLength(body)) }), body: Buffer.from(body) }); return { status: r.status, body: await r.text() }; });
 const path = require('path');
 if (!app.requestSingleInstanceLock()) { app.quit(); }
 let win;

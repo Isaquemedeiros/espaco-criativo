@@ -91,14 +91,20 @@ class Store {
   async pipeline(stmts) {
     const body = { requests: stmts.map(s => ({ type: 'execute', stmt: s })).concat([{ type: 'close' }]) };
     const headers = { 'Authorization': 'Bearer ' + this.meta.token, 'Content-Type': 'application/json' };
-    let status, j;
+    let status, txt = '';
     try {
-      if (typeof window !== 'undefined' && window.ecNet) { const r = await window.ecNet.post(this.meta.url + '/v2/pipeline', headers, JSON.stringify(body)); status = r.status; j = r.body ? JSON.parse(r.body) : null; }
-      else { const r = await fetch(this.meta.url + '/v2/pipeline', { method: 'POST', headers, body: JSON.stringify(body) }); status = r.status; j = status === 200 ? await r.json() : null; }
-    } catch (e) { throw new Error('não conectou — confira o endereço e a internet'); }
+      const r = await fetch(this.meta.url + '/v2/pipeline', { method: 'POST', headers, body: JSON.stringify(body) });
+      status = r.status; txt = await r.text();
+    } catch (e) {
+      if (typeof window !== 'undefined' && window.ecNet) {
+        try { const r = await window.ecNet.post(this.meta.url + '/v2/pipeline', headers, JSON.stringify(body)); status = r.status; txt = r.body || ''; }
+        catch (e2) { throw new Error('não conectou — confira o endereço e a internet'); }
+      } else throw new Error('não conectou — confira o endereço e a internet');
+    }
+    let j = null; try { j = JSON.parse(txt); } catch (_) { }
     if (status === 401 || status === 403) throw new Error('token inválido ou sem permissão');
     if (status === 404) throw new Error('endereço do banco não encontrado');
-    if (status !== 200 || !j) throw new Error('o banco respondeu com erro ' + status);
+    if (status !== 200 || !j) throw new Error('o banco respondeu com erro ' + status + (txt ? ' — ' + String((j && (j.message || j.error)) || txt).slice(0, 120) : ''));
     const out = [];
     for (const res of j.results) {
       if (res.type !== 'ok') throw new Error((res.error && res.error.message) || 'erro no banco');
