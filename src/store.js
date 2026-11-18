@@ -93,14 +93,9 @@ class Store {
     const headers = { 'Authorization': 'Bearer ' + this.meta.token, 'Content-Type': 'application/json' };
     let status, txt = '';
     try {
-      const r = await fetch(this.meta.url + '/v2/pipeline', { method: 'POST', headers, body: JSON.stringify(body) });
-      status = r.status; txt = await r.text();
-    } catch (e) {
-      if (typeof window !== 'undefined' && window.ecNet) {
-        try { const r = await window.ecNet.post(this.meta.url + '/v2/pipeline', headers, JSON.stringify(body)); status = r.status; txt = r.body || ''; }
-        catch (e2) { throw new Error('não conectou — confira o endereço e a internet'); }
-      } else throw new Error('não conectou — confira o endereço e a internet');
-    }
+      if (typeof window !== 'undefined' && window.ecNet) { const r = await window.ecNet.post(this.meta.url + '/v2/pipeline', headers, JSON.stringify(body)); status = r.status; txt = r.body || ''; }
+      else { const r = await fetch(this.meta.url + '/v2/pipeline', { method: 'POST', headers, body: JSON.stringify(body) }); status = r.status; txt = await r.text(); }
+    } catch (e) { throw new Error('não conectou — confira o endereço e a internet'); }
     let j = null; try { j = JSON.parse(txt); } catch (_) { }
     if (status === 401 || status === 403) throw new Error('token inválido ou sem permissão');
     if (status === 404) throw new Error('endereço do banco não encontrado');

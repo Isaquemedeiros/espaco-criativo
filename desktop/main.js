@@ -1,5 +1,16 @@
-const { app, BrowserWindow, shell, Menu, ipcMain, net } = require('electron');
-ipcMain.handle('ec-post', async (e, { url, headers, body }) => { if (!/^https:\/\//i.test(url)) throw new Error('url'); const r = await net.fetch(url, { method: 'POST', headers: Object.assign({}, headers, { 'Content-Length': String(Buffer.byteLength(body)) }), body: Buffer.from(body) }); return { status: r.status, body: await r.text() }; });
+const { app, BrowserWindow, shell, Menu, ipcMain } = require('electron');
+const https = require('https');
+function post({ url, headers, body }) {
+  return new Promise((res, rej) => {
+    const u = new URL(url); if (u.protocol !== 'https:') return rej(new Error('url'));
+    const buf = Buffer.from(body, 'utf8');
+    const req = https.request(u, { method: 'POST', headers: Object.assign({}, headers, { 'Content-Length': buf.length }) }, r => {
+      const c = []; r.on('data', d => c.push(d)); r.on('end', () => res({ status: r.statusCode, body: Buffer.concat(c).toString('utf8') }));
+    });
+    req.on('error', rej); req.setTimeout(20000, () => req.destroy(new Error('timeout'))); req.end(buf);
+  });
+}
+ipcMain.handle('ec-post', (e, a) => post(a));
 const path = require('path');
 if (!app.requestSingleInstanceLock()) { app.quit(); }
 let win;
