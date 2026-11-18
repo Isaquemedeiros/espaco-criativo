@@ -78,8 +78,9 @@ class Store {
 
   // ---------- Turso ----------
   setConfig(url, token) {
-    url = (url || '').trim().replace(/^libsql:\/\//, 'https://').replace(/\/+$/, '');
-    this.meta.url = url; this.meta.token = (token || '').trim(); this.meta.lastSeq = 0;
+    url = (url || '').replace(/\s+/g, '').replace(/^libsql:\/\//i, 'https://').replace(/^wss?:\/\//i, 'https://').replace(/\/+$/, '');
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    this.meta.url = url; this.meta.token = (token || '').replace(/\s+/g, '').replace(/^Bearer/i, ''); this.meta.lastSeq = 0;
     // reenvia tudo para o banco novo
     this.meta.outbox = [];
     TABLES.forEach(t => Object.keys(this.data[t]).forEach(id => this.meta.outbox.push(t + '|' + id)));
@@ -89,11 +90,15 @@ class Store {
   }
   async pipeline(stmts) {
     const body = { requests: stmts.map(s => ({ type: 'execute', stmt: s })).concat([{ type: 'close' }]) };
-    const r = await fetch(this.meta.url + '/v2/pipeline', {
-      method: 'POST', headers: { 'Authorization': 'Bearer ' + this.meta.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
+    const headers = { 'Authorization': 'Bearer ' + this.meta.token, 'Content-Type': 'application/json' };
+    let status, j;
+    try {
+      if (typeof window !== 'undefined' && window.ecNet) { const r = await window.ecNet.post(this.meta.url + '/v2/pipeline', headers, JSON.stringify(body)); status = r.status; j = r.body ? JSON.parse(r.body) : null; }
+      else { const r = await fetch(this.meta.url + '/v2/pipeline', { method: 'POST', headers, body: JSON.stringify(body) }); status = r.status; j = status === 200 ? await r.json() : null; }
+    } catch (e) { throw new Error('não conectou — confira o endereço e a internet'); }
+    if (status === 401 || status === 403) throw new Error('token inválido ou sem permissão');
+    if (status === 404) throw new Error('endereço do banco não encontrado');
+    if (status !== 200 || !j) throw new Error('o banco respondeu com erro ' + status);
     const out = [];
     for (const res of j.results) {
       if (res.type !== 'ok') throw new Error((res.error && res.error.message) || 'erro no banco');

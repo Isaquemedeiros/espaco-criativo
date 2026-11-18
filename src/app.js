@@ -156,9 +156,10 @@ class App extends Component {
       </div></div>`;
   }
   syncDot() { const st = store.status; return st === 'ok' ? '#4ADE80' : st === 'erro' ? '#F87171' : st === 'sync' ? '#FBBF24' : 'rgba(255,255,255,.35)'; }
+  openSettings() { this.setState({ settings: true, sUrl: store.meta.url || '', sTok: store.meta.token || '', setMsg: '' }); }
   settingsPanel() {
     const m = store.meta, s = this.state;
-    const save = () => { store.setConfig(this.urlIn.value, this.tokIn.value); };
+    const save = () => { this.setState({ setMsg: '' }); store.setConfig(s.sUrl, s.sTok); };
     const exp = () => { const b = new Blob([store.exportJSON()], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'espaco-criativo-backup-' + today() + '.json'; a.click(); };
     const imp = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { store.importJSON(t); alertMsg('Backup importado.'); } catch (er) { alertMsg('Arquivo inválido.'); } }); };
     const alertMsg = t => this.setState({ setMsg: t });
@@ -168,8 +169,8 @@ class App extends Component {
         <div class="sg" style="font-size:22px;font-weight:300;letter-spacing:5px">AJUSTES</div>
         <div style="font-size:11px;letter-spacing:3px;color:rgba(232,238,248,.55);margin-top:10px">SINCRONIZAÇÃO (TURSO)</div>
         <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style=${`width:8px;height:8px;border-radius:50%;background:${this.syncDot()}`}></span>${stTxt}</div>
-        <label style="font-size:12px;color:rgba(232,238,248,.6)">Endereço do banco<input ref=${el => this.urlIn = el} class="field" placeholder="libsql://seu-banco.turso.io" value=${m.url} /></label>
-        <label style="font-size:12px;color:rgba(232,238,248,.6)">Token<input ref=${el => this.tokIn = el} class="field" type="password" placeholder="cole o token aqui" value=${m.token} /></label>
+        <label style="font-size:12px;color:rgba(232,238,248,.6)">Endereço do banco<input class="field" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="libsql://seu-banco.turso.io" value=${s.sUrl} onInput=${e => this.setState({ sUrl: e.currentTarget.value })} /></label>
+        <label style="font-size:12px;color:rgba(232,238,248,.6)">Token<input class="field" type="password" autocomplete="off" placeholder="cole o token aqui" value=${s.sTok} onInput=${e => this.setState({ sTok: e.currentTarget.value })} /></label>
         <button class="btn" onClick=${save} style="height:44px;border-radius:22px;border:0;background:rgba(79,168,255,.3);color:#fff;font-size:14px">Conectar e sincronizar</button>
         <div style="font-size:11px;letter-spacing:3px;color:rgba(232,238,248,.55);margin-top:18px">BACKUP</div>
         <button class="btn" onClick=${exp} style="height:44px;border-radius:22px;border:0;background:rgba(255,255,255,.08);color:#fff;font-size:14px">Baixar backup (arquivo)</button>
@@ -218,7 +219,7 @@ class App extends Component {
         </div>
         <div class="fadein" style="position:absolute;right:36px;top:30px;z-index:5;display:flex;gap:10px">
           <button class="btn" onClick=${() => this.setState({ moodOpen: !s.moodOpen })} style="height:40px;padding:0 18px;border-radius:20px;border:0;background:rgba(255,255,255,.06);color:#E8EEF8;font-size:12px;letter-spacing:2px;display:flex;align-items:center;gap:10px"><span style=${`width:9px;height:9px;border-radius:50%;background:${acc};box-shadow:0 0 10px ${acc}`}></span>HUMOR · ${M.l.toUpperCase()}</button>
-          <button class="btn" aria-label="Ajustes" onClick=${() => this.setState({ settings: true })} style="position:relative;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.06);color:#E8EEF8;display:flex;align-items:center;justify-content:center"><${Gear} /><span style=${`position:absolute;right:6px;top:6px;width:7px;height:7px;border-radius:50%;background:${this.syncDot()}`}></span></button>
+          <button class="btn" aria-label="Ajustes" onClick=${() => this.openSettings()} style="position:relative;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.06);color:#E8EEF8;display:flex;align-items:center;justify-content:center"><${Gear} /><span style=${`position:absolute;right:6px;top:6px;width:7px;height:7px;border-radius:50%;background:${this.syncDot()}`}></span></button>
         </div>
 
         ${s.view === 'mente' && html`
@@ -376,7 +377,7 @@ class App extends Component {
           <div><div class="sg" style=${`font-size:11px;letter-spacing:3px;color:${acc}`}>${D.w} · ${D.n} ${D.m}${isToday ? ' · HOJE' : ''}</div><div class="sg" style="font-size:20px;font-weight:300">${s.clock}</div></div>
           <div style="display:flex;gap:8px">
             <button class="btn" onClick=${() => this.setState({ moodOpen: !s.moodOpen })} aria-label="Mudar humor" style="height:36px;padding:0 14px;border-radius:18px;border:0;background:rgba(255,255,255,.07);color:#E8EEF8;font-size:11px;letter-spacing:2px;display:flex;align-items:center;gap:8px"><span style=${`width:8px;height:8px;border-radius:50%;background:${acc};box-shadow:0 0 8px ${acc}`}></span>${M.l.toUpperCase()}</button>
-            <button class="btn" aria-label="Ajustes" onClick=${() => this.setState({ settings: true })} style="position:relative;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.07);color:#E8EEF8;display:flex;align-items:center;justify-content:center"><${Gear} /><span style=${`position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;background:${this.syncDot()}`}></span></button>
+            <button class="btn" aria-label="Ajustes" onClick=${() => this.openSettings()} style="position:relative;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.07);color:#E8EEF8;display:flex;align-items:center;justify-content:center"><${Gear} /><span style=${`position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;background:${this.syncDot()}`}></span></button>
           </div></div>
         ${s.view === 'mente' && !s.moodOpen && html`
           <div style="position:absolute;left:0;right:0;top:200px;text-align:center;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px">

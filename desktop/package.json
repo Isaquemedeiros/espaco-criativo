@@ -1,11 +1,12 @@
 {
   "name": "espaco-criativo",
   "productName": "Espaço Criativo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Espaço Criativo — sua mente",
   "author": "Isaque",
   "main": "main.js",
   "build": {
+    "publish": null,
     "appId": "com.isaque.espacocriativo",
     "productName": "Espaço Criativo",
     "files": [

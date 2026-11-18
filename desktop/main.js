@@ -1,4 +1,5 @@
-const { app, BrowserWindow, shell, Menu } = require('electron');
+const { app, BrowserWindow, shell, Menu, ipcMain, net } = require('electron');
+ipcMain.handle('ec-post', async (e, { url, headers, body }) => { if (!/^https:\/\//i.test(url)) throw new Error('url'); const r = await net.fetch(url, { method: 'POST', headers, body }); return { status: r.status, body: await r.text() }; });
 const path = require('path');
 if (!app.requestSingleInstanceLock()) { app.quit(); }
 let win;
@@ -6,7 +7,7 @@ function create() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 900, minHeight: 600, backgroundColor: '#02040A', show: false,
     title: 'Espaço Criativo', icon: path.join(__dirname, 'www', 'icon-512.png'), autoHideMenuBar: true,
-    webPreferences: { contextIsolation: true, nodeIntegration: false, spellcheck: true }
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, spellcheck: true }
   });
   Menu.setApplicationMenu(null);
   win.loadFile(path.join(__dirname, 'www', 'index.html'));
