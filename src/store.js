@@ -114,6 +114,7 @@ class Store {
   }
   async sync() {
     if (!this.meta.url || !this.meta.token || this.syncing) return;
+    if (/[^A-Za-z0-9._-]/.test(this.meta.token)) { this.status = 'erro'; this.statusMsg = 'o token colado tem caracteres estranhos (provavelmente veio cortado) — gere e cole de novo'; this.emit(); return; }
     if (typeof navigator !== 'undefined' && navigator.onLine === false) { this.status = 'erro'; this.statusMsg = 'sem internet'; this.emit(); return; }
     this.syncing = true;
     try {
